@@ -1,8 +1,6 @@
 # Almacenamiento, Guardado y Recuperación de Puntuaciones en el Sistema I2C
 
-Este documento explica de forma detallada el flujo completo de manejo de puntuaciones (*Scores*) dentro del ecosistema de hardware digital y software embebido de tu repositorio `I2C_Master`, especificando dónde se almacenan físicamente, cómo se ejecutan las operaciones de escritura a través del controlador maestro $I^2C$, y cómo se recuperan los datos para ser mostrados en una pantalla.
 
----
 
 ## 1. Dónde se almacena la Puntuación (Mapa Físico y de Memoria)
 
