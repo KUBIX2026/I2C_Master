@@ -27,6 +27,7 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
 
 * **MASTER FINAL:** Controla y coordina la comunicación I²C con el dispositivo esclavo, generando las señales SCL y SDA necesarias para leer o escribir datos.
  <img width="528" height="1062" alt="GENERALBLOCK" src="https://github.com/user-attachments/assets/b1c6b2d0-25a4-491f-b3ad-0cb23963d355" />
+ 
 **Figura 2 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
 
 ## 2. Almacenamiento, Guardado y Recuperación de Puntuaciones (*Scores*)
