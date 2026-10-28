@@ -9,7 +9,7 @@ Su función principal dentro del sistema general del videojuego es actuar como u
 
 ---
 
-## 2. Especificación Técnica y Restricciones (Criterio C1)
+## 2. Especificación Técnica y Restricciones
 
 ### 2.1. Definición de Interfaces, Entradas y Salidas (Pinout)
 El periférico divide su interfaz en dos dominios: la **Interfaz del Bus del Sistema (Lado CPU)** y la **Interfaz Física del Bus $I^2C$ (Lado Externo)**.
