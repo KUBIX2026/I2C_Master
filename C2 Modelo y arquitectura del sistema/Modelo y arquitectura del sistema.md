@@ -32,6 +32,8 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
  
 **Figura 3 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
 
+## 1.3 Diagrama de flujo operacional (logico/leguaje maquina).
+
 ## 2. Almacenamiento, Guardado y Recuperación de Puntuaciones (*Scores*)
 
 ### 2.1. ¿Dónde se almacena el Score?
