@@ -11,7 +11,7 @@
 Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010
 
 * **MASTER:** Decide qué operación I²C realizar.
-* <img width="412" height="651" alt="Diagrama sin título(1)" src="https://github.com/user-attachments/assets/0a72a99a-ca79-475a-afae-48b39216bdbe" />
+ <img width="412" height="651" alt="Diagrama sin título(1)" src="https://github.com/user-attachments/assets/0a72a99a-ca79-475a-afae-48b39216bdbe" />
 
 **Figura 1.2. Diagrama de bloques MASTER protocolo I2C.**
 
@@ -26,7 +26,7 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
 **Figura 1.3 Diagrama de bloques DATA PATH protocolo I2C.**
 
 * **MASTER FINAL:** Controla y coordina la comunicación I²C con el dispositivo esclavo, generando las señales SCL y SDA necesarias para leer o escribir datos.
-* <img width="528" height="1062" alt="GENERALBLOCK" src="https://github.com/user-attachments/assets/b1c6b2d0-25a4-491f-b3ad-0cb23963d355" />
+ <img width="528" height="1062" alt="GENERALBLOCK" src="https://github.com/user-attachments/assets/b1c6b2d0-25a4-491f-b3ad-0cb23963d355" />
 **Figura 2 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
 
 ## 2. Almacenamiento, Guardado y Recuperación de Puntuaciones (*Scores*)
