@@ -4,9 +4,6 @@
 **Figura 1. Diagrama de flujo general protocolo I2C.**
 <img width="577" height="1202" alt="Diagrama flujo-I2C_Master_Flowchart drawio (3)" src="https://github.com/user-attachments/assets/b1c9b4f8-bcb7-4731-a5c5-e9f10ac89890" />
 
-
-
-
 ## 1.2 Diagrama de bloques.
 * **Diagrama de bloques general:** 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
