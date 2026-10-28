@@ -1,6 +1,6 @@
 ## 1. Modelo y Arquitectura del Sistema (Criterio C2)
 
-### 1.1. Diagrama de flujo de alto nivel. 
+### 1.1 Diagrama de flujo de alto nivel. 
 
 
 ## 1.2 Diagrama de bloques.
@@ -14,7 +14,7 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
 * **MASTER:** Decide qué operación I²C realizar.
  <img width="412" height="651" alt="Diagrama sin título(1)" src="https://github.com/user-attachments/assets/0a72a99a-ca79-475a-afae-48b39216bdbe" />
 
-**Figura 2.1. Diagrama de bloques MASTER protocolo I2C.**
+**Figura 2.1 Diagrama de bloques MASTER protocolo I2C.**
 
 * **CONTROL UNIT:** Decide qué operación debe realizarse y en qué momento, mediante una máquina de estados (FSM).
 <img width="412" height="651" alt="CONTROLBLOCK" src="https://github.com/user-attachments/assets/8fa5d96a-8d2f-49b9-836d-65e02f78a2f3" />
