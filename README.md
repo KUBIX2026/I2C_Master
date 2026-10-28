@@ -1,5 +1,11 @@
 
-## Teoría de Operación: Protocolo I2C y Memoria EEPROM
+# Teoría de Operación: Protocolo I2C y Memoria EEPROM
+
+## 1. Introducción y Propósito del Sistema
+El presente repositorio implementa un bloque IP de hardware reutilizable correspondiente a un controlador maestro **$I^2C$ (*Inter-Integrated Circuit*)**, diseñado para integrarse como un periférico mapeado en memoria dentro de un System-on-Chip (SoC) basado en procesador (siguiendo la estructura de referencia de periféricos como `perip_blink.v`). 
+
+Su función principal dentro del sistema general del videojuego es actuar como un puente de comunicación síncrona de alta confiabilidad para **almacenar y recuperar de forma no volátil las puntuaciones (*Scores*) de los jugadores en una memoria EEPROM externa** (ej. serie 24LCxx conectada en la dirección base `0x50`), liberando a la CPU de la gestión temporal bit a bit del protocolo.
+
 
 A continuación se detallan los fundamentos teóricos del bus I2C y las características de la memoria externa, información clave para el desarrollo de la máquina de estados de nuestro periférico Master.
 
