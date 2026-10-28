@@ -2,6 +2,7 @@
 
 ### 1.1 Diagrama de flujo de alto nivel. 
 <img width="577" height="1202" alt="Diagrama flujo-I2C_Master_Flowchart drawio (2)" src="https://github.com/user-attachments/assets/ff179235-4917-4ead-8bcc-1c83e0031297" />
+
 **Figura 2. Diagrama de flujo general protocolo I2C.**
 
 ## 1.2 Diagrama de bloques.
