@@ -41,6 +41,9 @@ El periférico se mapea en el espacio de direcciones de 32 bits del procesador m
 | `0x10` | `I2C_STATUS` | RO / W1C | `0x0000_0000` | **`[0] BUSY`** (RO): `1` mientras el bus está ocupado entre `START` y `STOP`.<br>**`[1] DONE`** (RO/W1C): `1` al finalizar la transferencia de un byte o condición de parada.<br>**`[2] ACK_ERR`** (RO/W1C): `1` si el esclavo responde con `NACK` (`SDA = 1`) en el 9.º pulso.<br>**`[3] ARB_LOST`** (RO/W1C): `1` si se detecta pérdida de arbitraje en el bus.<br>**`[31:4]`**: Reservados (`0`). |
 | `0x14` | `I2C_PRESCALER` | R/W | `0x0000_007C` | **`[15:0] PRESCALE_VAL`**: Divisor de frecuencia para generar las 4 sub-fases por período de `SCL` ($\text{PRESCALER} = \frac{f_{CLK}}{4 \cdot f_{SCL}} - 1$).<br>**`[31:16]`**: Reservados (`0`). |
 
+<img width="645" height="480" alt="image" src="https://github.com/user-attachments/assets/35726f2c-ad2d-476c-aeb6-1a7828195405" />
+
+
 ### 2.3. Restricciones Técnicas y Capa Física
 1. **Topología *Open-Drain* (Drenador Abierto):** Queda estrictamente prohibido inyectar un nivel alto activo (`1'b1` *push-pull*) en los pines `sda` y `scl` para prevenir cortocircuitos cuando un esclavo fuerza un `0` lógico. Las salidas conmutan exclusivamente entre `1'b0` y alta impedancia (`1'bZ`), requiriendo resistencias de *pull-up* externas ($R_p$ entre $2.2\text{ k}\Omega$ y $4.7\text{ k}\Omega$ a $3.3\text{ V}$) con capacitancia de bus $C_{bus} \le 400\text{ pF}$.
 2. **Regla de Validez de Datos:** `SDA` solo puede cambiar de valor mientras `SCL = 0` (en la sub-fase $Q_0$) y debe permanecer estrictamente estable durante todo el pulso alto `SCL = 1` ($Q_2$ y $Q_3$), excepto en las condiciones de control `START`, `Repeated START` y `STOP`.
