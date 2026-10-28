@@ -1,4 +1,4 @@
-# Especificación y Arquitectura del Sistema: Periférico I2C_Master y Almacenamiento de Scores en EEPROM
+# Especificación y restricciones del Sistema: Periférico I2C_Master.
 
 ---
 
