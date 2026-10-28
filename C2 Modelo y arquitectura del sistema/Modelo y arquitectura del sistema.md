@@ -3,7 +3,7 @@
 ### 1.1. Diagrama de flujo de alto nivel. 
 
 ## 1.2 Diagrama de bloques.
-## **Diagrama de bloques general:** 
+* **Diagrama de bloques general:** 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
 
 **Figura 1. Diagrama de bloques general protocolo I2C.**
