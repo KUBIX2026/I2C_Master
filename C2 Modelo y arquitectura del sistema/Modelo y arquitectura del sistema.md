@@ -7,8 +7,9 @@
 
 ## 1.2 Diagrama de bloques.
 
-* **Diagrama de bloques general:** 
+* **Diagrama de bloques general y concreto:** 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
+<img width="539" height="181" alt="image" src="https://github.com/user-attachments/assets/15919172-0095-4d7e-a9da-753ec793fbbb" />
 
 **Figura 2. Diagrama de bloques general protocolo I2C.**
 
@@ -23,19 +24,45 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
 **Figura 2.1 Diagrama de bloques MASTER protocolo I2C.**
 
 * **CONTROL UNIT:** Decide qué operación debe realizarse y en qué momento, mediante una máquina de estados (FSM).
-<img width="412" height="651" alt="CONTROLBLOCK" src="https://github.com/user-attachments/assets/8fa5d96a-8d2f-49b9-836d-65e02f78a2f3" />
+<img width="294" height="170" alt="image" src="https://github.com/user-attachments/assets/d9b13c6e-401a-4aaf-bce4-b23402c3c9ca" />
+<img width="464" height="209" alt="image" src="https://github.com/user-attachments/assets/8fcd07e4-3a7d-4506-a332-128f919d362e" />
 
-**Figura 2.1.1 Diagrama de bloques CONTROL UNIT protocolo I2C.**
+
+**Figura 2.2 Diagrama de bloques CONTROL UNIT protocolo I2C.**
 
 * **DATA PATH:** Contiene los registros, contadores, multiplexores y demás circuitos que manipulan, transmiten y reciben los datos durante la comunicación.
-<img width="412" height="561" alt="pathBLOCK" src="https://github.com/user-attachments/assets/69c5b2e3-d7c3-4dc4-bfd5-da1c5bdddc2e" />
+<img width="321" height="115" alt="image" src="https://github.com/user-attachments/assets/27378702-a633-4b33-93e6-909a28970fd3" />
+<img width="462" height="149" alt="image" src="https://github.com/user-attachments/assets/c045927f-5dcf-45ae-89f0-fb5436cfe61e" />
 
-**Figura 2.2 Diagrama de bloques DATA PATH protocolo I2C.**
+
+**Figura 2.3 Diagrama de bloques DATA PATH protocolo I2C.**
 
 * **MASTER FINAL:** Controla y coordina la comunicación I²C con el dispositivo esclavo, generando las señales SCL y SDA necesarias para leer o escribir datos.
- <img width="528" height="1062" alt="GENERALBLOCK" src="https://github.com/user-attachments/assets/b1c6b2d0-25a4-491f-b3ad-0cb23963d355" />
+ <img width="303" height="108" alt="image" src="https://github.com/user-attachments/assets/32d9a588-b632-4ab2-8820-34213ca57dd9" />
+ <img width="459" height="122" alt="image" src="https://github.com/user-attachments/assets/8a8b9bf5-62cf-4f4e-b1b9-cb183dd9d48d" />
  
-**Figura 3 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
+**Figura 2.4 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
+
+* **Generador de reloj:** Genera la señal de temporización `clk_i2c` y el pulso `tick` a partir del reloj del sistema y del valor de `prescaler`. Este valor define la frecuencia del bus (100 kHz / 400 kHz) y sincroniza al Control Unit, al Data Path y al Master Final.
+<img width="278" height="87" alt="image" src="https://github.com/user-attachments/assets/373e3b0a-0782-4d77-a747-e7788101e62a" />
+<img width="439" height="91" alt="image" src="https://github.com/user-attachments/assets/4843e41c-3b76-4405-a80b-a637a912c5b0" />
+
+  
+**Figura 2.5  Diagrama de bloques del Generador de reloj.**
+
+* **Registros de control y estado:** Almacenan la configuración de la operación y el estado del controlador. Permiten escribir y leer registros (`wr_en`, `rd_en`) y consultar el estado (`status[2:0]`), por lo que sirven de interfaz entre el sistema y el I²C Master.
+<img width="401" height="124" alt="image" src="https://github.com/user-attachments/assets/92cad669-fc0b-4a67-912a-b6d4786f97f7" />
+<img width="556" height="146" alt="image" src="https://github.com/user-attachments/assets/022c829b-47e1-4253-86a8-a95fbf55d5fb" />
+  
+**Figura 2.6 Diagrama de bloques de los Registros de control y estado.**
+
+* **Secuencia de una transferencia I2C:** Muestra el orden de pasos de una transferencia: IDLE → START → ADDR (7 bits + R/W) → ACK → DATOS (8 bits) → ACK/NACK → STOP. Corresponde solo al protocolo, no a un bloque del hardware.
+<img width="389" height="141" alt="image" src="https://github.com/user-attachments/assets/e899369d-7883-474b-980f-e3c7b37ea20a" />
+<img width="556" height="142" alt="image" src="https://github.com/user-attachments/assets/13dd3ad2-fdfa-4533-9c19-a66827713123" />
+
+  
+**Figura 2.7 Secuencia de una transferencia I2C (solo protocolo).**
+
 
 ## 1.3 Diagrama de flujo operacional (Algoritmo de lectura y escritura del I²C Master).
 <img width="1688" height="2532" alt="flujo_i2c_master_page-0001" src="https://github.com/user-attachments/assets/3a0f98bd-3aa9-4daa-beb9-7d399be56e6b" />
