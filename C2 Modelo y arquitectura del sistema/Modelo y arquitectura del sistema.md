@@ -77,8 +77,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ### 2.1. ¿Dónde se almacena el Score?
 El puntaje del juego posee dos niveles de almacenamiento:
 1. **Volátil (RAM del Procesador):** Durante el transcurso de la partida, la puntuación se actualiza en tiempo real en registros y variables alojadas en la memoria RAM interna del procesador SoC.
-2. **No Volátil (Memoria EEPROM Externa 24LCxx o 24Cxx):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa conectada en la dirección `0x50`, garantizando que los récords persistan aunque el sistema se apague.
-La disposición de los pines y su coneccion se puede describir de la siguiente manera:
+2. **No Volátil (Memoria EEPROM):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa, garantizando que los récords persistan aunque el sistema se apague.
+La disposición de los pines y su conexion se puede describir de la siguiente manera:
   
 
     
