@@ -56,7 +56,7 @@ Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.re
   
 **Figura 2.6 Diagrama de bloques de los Registros de control y estado.**
 
-* **Secuencia de una transferencia I2C:** Muestra el orden de pasos de una transferencia: IDLE → START → ADDR (7 bits + R/W) → ACK → DATOS (8 bits) → ACK/NACK → STOP. Corresponde solo al protocolo, no a un bloque del hardware.
+* **Secuencia de una transferencia I2C:** Muestra el orden de pasos de una transferencia, Corresponde solo al protocolo, no a un bloque del hardware.
 <img width="389" height="141" alt="image" src="https://github.com/user-attachments/assets/e899369d-7883-474b-980f-e3c7b37ea20a" />
 <img width="556" height="142" alt="image" src="https://github.com/user-attachments/assets/13dd3ad2-fdfa-4533-9c19-a66827713123" />
 
