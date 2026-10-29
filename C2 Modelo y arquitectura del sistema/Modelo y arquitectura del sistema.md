@@ -5,15 +5,17 @@
 
 **Figura 1. Diagrama de flujo general protocolo I2C.**
 
-## 1.2 Diagrama de bloques.
+## 1.2 Diagrama de bloques general.
 
-* **Diagrama de bloques general y concreto:** 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
+
+* **Diagrama de bloques concreto (I²C Master propuesto)**
+
 <img width="539" height="181" alt="image" src="https://github.com/user-attachments/assets/15919172-0095-4d7e-a9da-753ec793fbbb" />
 
-**Figura 2. Diagrama de bloques general protocolo I2C.**
+**Figura 2. Diagrama de bloques general protocolo I2C. (a) Diagrama general de referencia. (b) Diagrama concreto del I²C Master propuesto.**
 
-Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010
+Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010
 
 * **MASTER:** Decide qué operación I²C realizar.
 <img width="373" height="164" alt="image" src="https://github.com/user-attachments/assets/472ec292-c980-4336-9d71-af927fd303a6" />
