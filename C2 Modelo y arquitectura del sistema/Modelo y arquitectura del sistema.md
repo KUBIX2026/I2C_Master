@@ -77,7 +77,20 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ### 2.1. ¿Dónde se almacena el Score?
 El puntaje del juego posee dos niveles de almacenamiento:
 1. **Volátil (RAM del Procesador):** Durante el transcurso de la partida, la puntuación se actualiza en tiempo real en registros y variables alojadas en la memoria RAM interna del procesador SoC.
-2. **No Volátil (Memoria EEPROM Externa 24LCxx):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa conectada en la dirección `0x50`, garantizando que los récords persistan aunque el sistema se apague.
+2. **No Volátil (Memoria EEPROM Externa 24LCxx o 24Cxx):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa conectada en la dirección `0x50`, garantizando que los récords persistan aunque el sistema se apague.
+   La disposición de los pines y su coneccion se puede describir de la siguiente manera:
+   <img width="906" height="608" alt="image" src="https://github.com/user-attachments/assets/4dc8e9e6-9d14-43bd-8875-c7077f04ee2f" />
+
+   El chip EEPROM recibe por SCL y SDA los comandos del maestro. La lógica de control interpreta el comando de acuerdo al seguimiento de la secuencia de las muestras, valida la dirección del dispositivo, maneja un contador interno de dirección y activa, según el caso, la ruta de **escritura** (bomba de alta tensión) o la ruta de **lectura** (decodificadores, multiplexor y salida).
+    
+| Pin | Función |
+|---|---|
+| **SCL** | Reloj serie. Los datos **entran** por flanco de subida y **salen** por flanco de bajada. |
+| **SDA** | Datos bidireccionales, de **drenador abierto**. Puede compartirse con otros dispositivos open-drain; requiere resistencia de pull-up externa. |
+| **A2, A1, A0** | Dirección física del dispositivo, cableada a VCC o GND. Permiten hasta 8 chips de 1K/2K en el mismo bus. |
+| **WP** | Protección de escritura. A **VCC** protege toda la matriz; a **GND** permite lectura y escritura normal. |
+| **VCC / GND** | Alimentación y tierra. |
+
 
 ### 2.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
 Cuando el juego termina, el firmware en C invoca al driver `i2c.c` para realizar una transacción de escritura por ráfaga (*Byte/Page Write*):
