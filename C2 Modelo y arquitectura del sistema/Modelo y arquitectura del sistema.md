@@ -111,7 +111,7 @@ vemos que el chip EEPROM recibe por SCL y SDA los comandos del maestro. La lógi
 | **H.V. pump/timing** | Bomba de carga y temporización para programar celdas. La activa la señal **EN**. Es el origen del ciclo interno autotemporizado (t_WR ≤ 5 ms). |
 | **D_OUT/ACK logic** | Maneja SDA en la salida: coloca los bits de lectura y genera el **ACK** (un cero en el noveno pulso). Actúa sobre un transistor a tierra, por eso SDA es de drenador abierto. |
 
-<img width="417" height="505" alt="image" src="https://github.com/user-attachments/assets/271727fc-562a-47ce-9db4-3f754f9474d6" />
+
 
 
 ### 2.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
