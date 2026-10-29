@@ -78,10 +78,9 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 El puntaje del juego posee dos niveles de almacenamiento:
 1. **Volátil (RAM del Procesador):** Durante el transcurso de la partida, la puntuación se actualiza en tiempo real en registros y variables alojadas en la memoria RAM interna del procesador SoC.
 2. **No Volátil (Memoria EEPROM Externa 24LCxx o 24Cxx):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa conectada en la dirección `0x50`, garantizando que los récords persistan aunque el sistema se apague.
-   La disposición de los pines y su coneccion se puede describir de la siguiente manera:
-   <img width="906" height="608" alt="image" src="https://github.com/user-attachments/assets/4dc8e9e6-9d14-43bd-8875-c7077f04ee2f" />
+La disposición de los pines y su coneccion se puede describir de la siguiente manera:
+  
 
-   El chip EEPROM recibe por SCL y SDA los comandos del maestro. La lógica de control interpreta el comando de acuerdo al seguimiento de la secuencia de las muestras, valida la dirección del dispositivo, maneja un contador interno de dirección y activa, según el caso, la ruta de **escritura** (bomba de alta tensión) o la ruta de **lectura** (decodificadores, multiplexor y salida).
     
 | Pin | Función |
 |---|---|
@@ -91,18 +90,69 @@ El puntaje del juego posee dos niveles de almacenamiento:
 | **WP** | Protección de escritura. A **VCC** protege toda la matriz; a **GND** permite lectura y escritura normal. |
 | **VCC / GND** | Alimentación y tierra. |
 
+ 2.1.1 Diagrama de bloques
+ 
+ <img width="906" height="608" alt="image" src="https://github.com/user-attachments/assets/4dc8e9e6-9d14-43bd-8875-c7077f04ee2f" />
+
+Fuente de (b): [Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010](https://www.alldatasheet.com/datasheet-pdf/view/56236/ATMEL/AT24CXX.html)
+
+El diagrama de bloques fue tomado del datasheet de un modelo de la familia de 224Cxx (Modelo AT24C01A/02/04/08A/16A), donde se ejemplifica el comportamiento externo del chip. 
+vemos que el chip EEPROM recibe por SCL y SDA los comandos del maestro. La lógica de control interpreta el comando de acuerdo al seguimiento de la secuencia de las muestras, valida la dirección del dispositivo, maneja un contador interno de dirección y activa, según el caso, la ruta de **escritura**  o la ruta de **lectura**.
+
+| Bloque | Función |
+|---|---|
+| **START/STOP logic** | Vigila SCL y SDA para detectar las condiciones de **START** y **STOP**, e informa a la lógica de control. |
+| **Serial control logic** | Unidad de control (máquina de estados). Recibe SCL, SDA y WP, y genera las señales **LOAD**, **INC** y **EN**. Coordina todo el chip. |
+| **Device address comparator** | Compara los 7 bits recibidos (`1010` + A2A1A0) con los pines físicos. Si coinciden produce **COMP** y el chip responde. También separa el bit **R/W**. |
+| **Data word addr/counter** | Contador que guarda la dirección de la palabra de memoria. Se carga con **LOAD** y se incrementa con **INC**; es el **puntero autoincremental**. |
+| **X DEC / Y DEC** | Decodificadores de **filas** y **columnas**; con la dirección del contador seleccionan la celda en la matriz. |
+| **EEPROM + Data recovery** | Matriz de memoria y amplificadores de lectura que recuperan el dato almacenado. |
+| **Serial MUX** | Selecciona el bit de la palabra leída que se envía hacia la salida. |
+| **H.V. pump/timing** | Bomba de carga y temporización para programar celdas. La activa la señal **EN**. Es el origen del ciclo interno autotemporizado (t_WR ≤ 5 ms). |
+| **D_OUT/ACK logic** | Maneja SDA en la salida: coloca los bits de lectura y genera el **ACK** (un cero en el noveno pulso). Actúa sobre un transistor a tierra, por eso SDA es de drenador abierto. |
+ ### Diagrama de estados
+  
+ ```mermaid
+ stateDiagram-v2
+     [*] --> Standby
+     Standby --> RxDispositivo: START
+     RxDispositivo --> Standby: dirección no coincide
+     RxDispositivo --> AckDisp: COMP (8 bits recibidos)
+     AckDisp --> RxDirPalabra: R/W = 0 (escritura)
+     AckDisp --> TxDato: R/W = 1 (lectura)
+     RxDirPalabra --> AckDir: 8 bits (LOAD al contador)
+     AckDir --> RxDato: dato siguiente
+     AckDir --> RxDispositivo: START repetido (random read)
+     RxDato --> AckDato: 8 bits
+     AckDato --> RxDato: sin STOP (page write, INC)
+     AckDato --> CicloEscritura: STOP (activa EN)
+     CicloEscritura --> Standby: fin de t_WR
+     TxDato --> EsperaAck: 8 bits enviados
+     EsperaAck --> TxDato: ACK del maestro (INC)
+     EsperaAck --> Standby: NO ACK + STOP
 
 ### 2.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
-Cuando el juego termina, el firmware en C invoca al driver `i2c.c` para realizar una transacción de escritura por ráfaga (*Byte/Page Write*):
+Cuando el juego termina, el firmware en C invoca al driver `i2c.c` para realizar una transacción de escritura por ráfaga (*Byte Write/Page Write*):
+
+<img width="941" height="619" alt="image" src="https://github.com/user-attachments/assets/e30e214b-daa8-4b7f-8897-281087a25e0b" />
+
+
 1. **Disparo START:** La CPU configura `I2C_ADDR = 0x50` con bit $R/\bar{W} = 0$ (Escritura) y activa `START_CMD = 1`.
 2. **Envío de Dirección de Memoria Interna:** Escribe en `I2C_TXDATA` la dirección de celda dentro de la EEPROM donde se guardará el puntaje y espera `DONE = 1`.
-3. **Envío de Bytes del Puntaje:** Envía secuencialmente los bytes que componen la variable del *Score* (ej. 2 o 4 bytes) depositándolos en `I2C_TXDATA`.
-4. **Condición STOP y Espera de Grabación:** El firmware ordena `STOP_CMD = 1`. Tras el `STOP`, el software aguarda el tiempo de ciclo interno de escritura de la EEPROM ($t_{WR} \le 5\text{ ms}$).
+3. **Envío de Bytes del Puntaje:** Envía secuencialmente los bytes que componen la variable del *Score* (ej. 2 o 4 bytes) depositándolos en `I2C_TXDATA`, mientras que en modo de operación Byte Write se escrobe un bite por operación requiriendo direcciones detalladas para cada uno, el modo de operación Page Write puede escribir varios Bytes en una sola operación.
+4. La escriturs por página se inicia igual que La escritura por byte, pero el maestro no envía STOP tras el primer dato. Mientras la EEPROM responda ACK, el maestro puede enviar de 7 a 15 datos mas para páginas de 8 a 16 bytes.
+5. **Condición STOP y Espera de Grabación:** El firmware ordena `STOP_CMD = 1`. Tras el `STOP`, el software aguarda el tiempo de ciclo interno de escritura de la EEPROM ($t_{WR} \le 5\text{ ms}$).
 
 ### 2.3. ¿Cómo se recupera el Score para mostrarlo en pantalla?
 Para mostrar la tabla de mejores puntajes en la interfaz gráfica, el procesador recupera la información ejecutando una **Transacción Combinada con Repeated START**:
+
+El proceso de lectira se puede dar con dos diferentes procesos o modos de operación:
+
+<img width="914" height="565" alt="image" src="https://github.com/user-attachments/assets/2a257fa0-b007-4cfc-ab24-818758ddbf05" />
+
+
 1. **Fase de Apuntamiento (Escritura de Dirección):** El maestro emite `START`, direcciona la EEPROM con $R/\bar{W} = 0$ y envía el byte de dirección de celda del puntaje.
-2. **Cambio de Modo (Repeated START):** Sin liberar el bus, el maestro emite un `Repeated START` (`START_CMD = 1`), direcciona nuevamente la EEPROM (`0x50`) pero con bit $R/\bar{W} = 1$ (Lectura).
+2. **Cambio de Modo (Repeated START):** Sin liberar el bus, el maestro emite un `Repeated START` (`START_CMD = 1`), direcciona nuevamente la EEPROM (`0x50`) pero con bit $R/\bar{W} = 1$ (Lectura). Para leer una dirección específica hay que cargar primero el puntero con una escritura ficticia (dummy write), sin llegar a escribir ningún dato. Si bien los dos modos de operación inician igual, si diferencia clave es que mientras la lectura aleatoria permite leer un byte en una dirección especifica, la lectura secuencial permite leer bytes consecutivos a la direccción inicial.
 3. **Lectura de Datos y Master NACK:** El hardware recibe los bytes del puntaje y los entrega a la CPU a través de `I2C_RXDATA`. Para el último byte leído, el maestro responde con un `NACK` (`ACK_EN = 1`) y emite la condición `STOP`.
 4. **Despliegue en Pantalla:** La CPU toma el valor recuperado de `I2C_RXDATA` y lo envía al controlador gráfico para renderizar el puntaje en la pantalla.
 
