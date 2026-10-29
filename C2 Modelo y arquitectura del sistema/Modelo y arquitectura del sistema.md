@@ -5,7 +5,7 @@
 
 **Figura 1. Diagrama de flujo general protocolo I2C.**
 
-## 1.2 Diagrama de bloques general.
+### 1.2 Diagrama de bloques general.
 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
 
@@ -43,14 +43,14 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
  <img width="303" height="108" alt="image" src="https://github.com/user-attachments/assets/32d9a588-b632-4ab2-8820-34213ca57dd9" />
  <img width="459" height="122" alt="image" src="https://github.com/user-attachments/assets/8a8b9bf5-62cf-4f4e-b1b9-cb183dd9d48d" />
  
-**Figura 2.4 Diagrama de bloques I2C MASTER diseño protocolo I2C.**
+**Figura 2.4 Diagrama de bloques MASTER FINAL protocolo I2C.**
 
 * **Generador de reloj:** Genera la señal de temporización `clk_i2c` y el pulso `tick` a partir del reloj del sistema y del valor de `prescaler`. Este valor define la frecuencia del bus (100 kHz / 400 kHz) y sincroniza al Control Unit, al Data Path y al Master Final.
 <img width="278" height="87" alt="image" src="https://github.com/user-attachments/assets/373e3b0a-0782-4d77-a747-e7788101e62a" />
 <img width="439" height="91" alt="image" src="https://github.com/user-attachments/assets/4843e41c-3b76-4405-a80b-a637a912c5b0" />
 
   
-**Figura 2.5  Diagrama de bloques del Generador de reloj.**
+**Figura 2.5 Diagrama de bloques del Generador de reloj.**
 
 * **Registros de control y estado:** Almacenan la configuración de la operación y el estado del controlador. Permiten escribir y leer registros (`wr_en`, `rd_en`) y consultar el estado (`status[2:0]`), por lo que sirven de interfaz entre el sistema y el I²C Master.
 <img width="401" height="124" alt="image" src="https://github.com/user-attachments/assets/92cad669-fc0b-4a67-912a-b6d4786f97f7" />
@@ -66,11 +66,11 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 **Figura 2.7 Secuencia de una transferencia I2C (solo protocolo).**
 
 
-## 1.3 Diagrama de flujo operacional (Algoritmo de lectura y escritura del I²C Master).
+### 1.3 Diagrama de flujo operacional (Algoritmo de lectura y escritura del I²C Master).
 <img width="1688" height="2532" alt="flujo_i2c_master_page-0001" src="https://github.com/user-attachments/assets/3a0f98bd-3aa9-4daa-beb9-7d399be56e6b" />
 
 
-**Figura 4 Diagrama de flujo del algoritmo de transferencia del I²C Master.**
+**Figura 3. Diagrama de flujo del algoritmo de transferencia del I²C Master.**
 
 ## 2. Almacenamiento, Guardado y Recuperación de Puntuaciones (*Scores*)
 
@@ -79,7 +79,7 @@ El puntaje del juego posee dos niveles de almacenamiento:
 1. **Volátil (RAM del Procesador):** Durante el transcurso de la partida, la puntuación se actualiza en tiempo real en registros y variables alojadas en la memoria RAM interna del procesador SoC.
 2. **No Volátil (Memoria EEPROM Externa 24LCxx):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa conectada en la dirección `0x50`, garantizando que los récords persistan aunque el sistema se apague.
 
-### 4.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
+### 2.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
 Cuando el juego termina, el firmware en C invoca al driver `i2c.c` para realizar una transacción de escritura por ráfaga (*Byte/Page Write*):
 1. **Disparo START:** La CPU configura `I2C_ADDR = 0x50` con bit $R/\bar{W} = 0$ (Escritura) y activa `START_CMD = 1`.
 2. **Envío de Dirección de Memoria Interna:** Escribe en `I2C_TXDATA` la dirección de celda dentro de la EEPROM donde se guardará el puntaje y espera `DONE = 1`.
@@ -106,12 +106,6 @@ Para mostrar la tabla de mejores puntajes en la interfaz gráfica, el procesador
 ### 3.2. Análisis de Alternativas Arquitectónicas
 * **Periférico Hardware RTL (Elegida) vs. *Bit-Banging* por Software:** Descarga a la CPU de retardos bloqueantes de $\sim 90\text{ }\mu\text{s}$ por byte, garantizando márgenes temporales estrictos para el bus $I^2C$.
 * **Diseño Síncrono con Habilitación de 4 Fases `tick_4x` (Elegida) vs. Relojes Múltiples:** Opera 100% bajo un único dominio de reloj (`clk`), evitando problemas de cruce de dominios (*CDC*) y garantizando estabilidad en el muestreo.
-* **Protocolo $I^2C$ de 2 Hilos (Elegida) vs. SPI:** Optimiza el uso de pines en la FPGA a solo 2 líneas (`SDA`, `SCL`) y provee confirmación nativa de recepción (`ACK/NACK`) ideal para memorias de almacenamiento de puntajes.
+* **Protocolo $I^2C$ de 2 Hilos (Elegida) vs. SPI:** Optimiza el uso de pines en la FPGA a solo 2 líneas (`SDA`, `SCL`) y provee confirmación nativa de recepción (`ACK/NACK`) igual de ideal para memorias de almacenamiento de puntajes.
 
 ---
-
-## 4. Criterios de Aceptación Verificables (Checklist para el Jueves)
-* [ ] **CA-01:** Las formas de onda en simulación (`GTKWave`) confirman operación puramente *Open-Drain* en `SDA` y `SCL`.
-* [ ] **CA-02:** Con el `PRESCALER` configurado, la frecuencia de `SCL` se estabiliza exactamente en $100\text{ kHz} \pm 1\%$.
-* [ ] **CA-03:** El módulo detecta esclavos ausentes levantando la bandera `ACK_ERR = 1` y ejecutando `STOP`.
-* [ ] **CA-04:** Se logra escribir y leer exitosamente una puntuación de prueba en la EEPROM mediante transacción combinada.
