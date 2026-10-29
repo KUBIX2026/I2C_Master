@@ -110,26 +110,9 @@ vemos que el chip EEPROM recibe por SCL y SDA los comandos del maestro. La lógi
 | **Serial MUX** | Selecciona el bit de la palabra leída que se envía hacia la salida. |
 | **H.V. pump/timing** | Bomba de carga y temporización para programar celdas. La activa la señal **EN**. Es el origen del ciclo interno autotemporizado (t_WR ≤ 5 ms). |
 | **D_OUT/ACK logic** | Maneja SDA en la salida: coloca los bits de lectura y genera el **ACK** (un cero en el noveno pulso). Actúa sobre un transistor a tierra, por eso SDA es de drenador abierto. |
- ### Diagrama de estados
-  
- ```mermaid
- stateDiagram-v2
-     [*] --> Standby
-     Standby --> RxDispositivo: START
-     RxDispositivo --> Standby: dirección no coincide
-     RxDispositivo --> AckDisp: COMP (8 bits recibidos)
-     AckDisp --> RxDirPalabra: R/W = 0 (escritura)
-     AckDisp --> TxDato: R/W = 1 (lectura)
-     RxDirPalabra --> AckDir: 8 bits (LOAD al contador)
-     AckDir --> RxDato: dato siguiente
-     AckDir --> RxDispositivo: START repetido (random read)
-     RxDato --> AckDato: 8 bits
-     AckDato --> RxDato: sin STOP (page write, INC)
-     AckDato --> CicloEscritura: STOP (activa EN)
-     CicloEscritura --> Standby: fin de t_WR
-     TxDato --> EsperaAck: 8 bits enviados
-     EsperaAck --> TxDato: ACK del maestro (INC)
-     EsperaAck --> Standby: NO ACK + STOP
+
+<img width="417" height="505" alt="image" src="https://github.com/user-attachments/assets/271727fc-562a-47ce-9db4-3f754f9474d6" />
+
 
 ### 2.2. ¿Cómo se guarda el Score? (Secuencia de Escritura)
 Cuando el juego termina, el firmware en C invoca al driver `i2c.c` para realizar una transacción de escritura por ráfaga (*Byte Write/Page Write*):
