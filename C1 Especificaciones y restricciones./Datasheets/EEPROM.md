@@ -1,0 +1,1 @@
+[AT24CXX pdf, AT24CXX Description, AT24CXX Datasheet, AT24CXX view ___ ALLDATASHEET ___.pdf](https://github.com/user-attachments/files/34132253/AT24CXX.pdf.AT24CXX.Description.AT24CXX.Datasheet.AT24CXX.view.___.ALLDATASHEET.___.pdf)
