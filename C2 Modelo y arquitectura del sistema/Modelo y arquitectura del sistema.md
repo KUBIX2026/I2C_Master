@@ -15,7 +15,10 @@
 Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010
 
 * **MASTER:** Decide qué operación I²C realizar.
- <img width="412" height="651" alt="Diagrama sin título(1)" src="https://github.com/user-attachments/assets/0a72a99a-ca79-475a-afae-48b39216bdbe" />
+<img width="373" height="164" alt="image" src="https://github.com/user-attachments/assets/472ec292-c980-4336-9d71-af927fd303a6" />
+<img width="461" height="135" alt="image" src="https://github.com/user-attachments/assets/b918af84-22fc-4497-9fb2-f53791ad7282" />
+
+
 
 **Figura 2.1 Diagrama de bloques MASTER protocolo I2C.**
 
