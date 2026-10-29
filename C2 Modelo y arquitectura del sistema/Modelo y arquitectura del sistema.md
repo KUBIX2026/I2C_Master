@@ -77,7 +77,7 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ### 2.1. ¿Dónde se almacena el Score?
 El puntaje del juego posee dos niveles de almacenamiento:
 1. **Volátil (RAM del Procesador):** Durante el transcurso de la partida, la puntuación se actualiza en tiempo real en registros y variables alojadas en la memoria RAM interna del procesador SoC.
-2. **No Volátil (Memoria EEPROM):** Al finalizar la partida, el puntaje es transferido mediante el periférico `perip_i2c_master` hacia una memoria EEPROM externa, garantizando que los récords persistan aunque el sistema se apague.
+2. **No Volátil (Memoria EEPROM):** Al finalizar la partida, el puntaje es transferido mediante el periférico `i2c_master` hacia una memoria EEPROM externa, garantizando que los récords persistan aunque el sistema se apague.
 La disposición de los pines y su conexion se puede describir de la siguiente manera:
   
 
@@ -146,7 +146,7 @@ El proceso de lectira se puede dar con dos diferentes procesos o modos de operac
 ### 3.1. Partición Hardware-Software (*HW/SW Partitioning*)
 | Subsistema | Responsabilidad Asignada | Justificación Técnica |
 | :--- | :---: | :--- |
-| **Hardware** (`perip_i2c_master.v` + `i2c_master_core.v`) | Generación de reloj `SCL` y cuadrantes $Q_0\text{–}Q_3$, serialización/deserialización MSB-first de 8 bits, conteo del pulso 9 (`ACK/NACK`), sincronización y control *Open-Drain*. | Requiere precisión determinista a nivel de microsegundos sin bloquear el ciclo de instrucciones de la CPU. |
+| **Hardware** (`i2c_master.v` + `i2c_master_core.v`) | Generación de reloj `SCL` y cuadrantes $Q_0\text{–}Q_3$, serialización/deserialización MSB-first de 8 bits, conteo del pulso 9 (`ACK/NACK`), sincronización y control *Open-Drain*. | Requiere precisión determinista a nivel de microsegundos sin bloquear el ciclo de instrucciones de la CPU. |
 | **Software** (`i2c.c`, `i2c.h` y Aplicación) | Configuración del `PRESCALER`, segmentación del *Score* en bytes, direccionamiento de celdas de la EEPROM, control de tiempos $t_{WR}$ y lógica de renderizado en pantalla. | Otorga flexibilidad para modificar estructuras de datos o protocolos de visualización sin resintetizar la FPGA. |
 
 ### 3.2. Análisis de Alternativas Arquitectónicas
