@@ -9,7 +9,7 @@
 
 <img width="736" height="477" alt="Captura desde 2026-10-05 05-35-00" src="https://github.com/user-attachments/assets/8f54781b-395f-4de5-840c-a57e91b409fa" />
 
-Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface. http://www.renesas.com/. abril 2010
+Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface. https://www.renesas.com/en/document/dst/ipdatasheetd-6i2c?srsltid=AYCX9vLh13SW_b_1LoOmPjjA_okOy-O2Uos2ZTlyrLFNmu5KJe_EcAlm. abril 2010
 
 * **Diagrama de bloques concreto (I²C Master propuesto)**
 
