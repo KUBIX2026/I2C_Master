@@ -10,9 +10,9 @@ Este repositorio contiene el desarrollo completo, estructurado y formal de un **
 
 El proyecto está organizado metodológicamente bajo los siguientes 9 criterios de diseño digital y arquitectura de hardware:
 
-1. [**C1 - Especificación y restricciones**](./C1%20Especificaciones%2_restricciones.)
+1. **[C1 - Especificaciones y restricciones](C1%20Especificaciones%20y%20restricciones/)**
    * Definición de anchos de banda, velocidades del bus I2C (Standard/Fast mode), requerimientos de resistencias *pull-up* y restricciones temporales.
-2. [**C2 - Modelo y arquitectura del sistema**](./C2%2_Modelo%2_y%2_arquitectura%2_del%2_sistema)
+2. * *[C2 - Modelo y arquitectura del sistema](C2%20Modelo%20y%20arquitectura%20del%20sistema/)**
    * Diagramas de bloques y separación formal entre la Unidad de Control (FSMD) y el Camino de Datos (Datapath).
 3. **C3 - Implementación técnica** *(Próximamente)*
    * Codificación RTL en Verilog modular, manejo seguro de líneas bidireccionales (*open-drain*) y sincronizadores de entrada (2FF).
