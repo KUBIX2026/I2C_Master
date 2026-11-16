@@ -85,19 +85,302 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 
 
 
+# Descripción y funcionamiento de las figuras del I2C Master
 
-<img width="1133" height="1161" alt="figura_06_asmd_start" src="https://github.com/user-attachments/assets/b6b07bb6-a194-4ef0-a874-8816971d7f1c" />
+---
 
-<img width="1133" height="1181" alt="figura_07_asmd_send" src="https://github.com/user-attachments/assets/c668b7b7-35f6-4205-a932-5fd865ed28ac" /><img width="1133" height="1043" alt="figura_05_asmd_hold" src="https://github.com/user-attachments/assets/92420034-941a-4695-8b5e-e808ce4ed90c" />
-<img width="1133" height="790" alt="figura_04_asmd_idle" src="https://github.com/user-attachments/assets/0dca6107-d816-49bd-a9b0-c48e99d038b1" />
-<img width="1248" height="1142" alt="figura_03_fsm" src="https://github.com/user-attachments/assets/9154d217-8fc8-49df-8ea2-b8ee2a6d340b" />
-<img width="1037" height="1430" alt="figura_02_bloques_control_datapath" src="https://github.com/user-attachments/assets/9d494728-7d81-4bee-907c-c4a94a7c67fe" />
-<img width="998" height="1426" alt="figura_01_caja_negra" src="https://github.com/user-attachments/assets/f86db3f0-441c-400c-9994-b72621a87eca" />
-<img width="1190" height="1075" alt="figura_12_temporizacion_0xA6" src="https://github.com/user-attachments/assets/6830fc49-524e-4262-943d-138d5976be2c" />
-<img width="1133" height="1211" alt="figura_11_asmd_stop" src="https://github.com/user-attachments/assets/cf69bb1e-fc31-4bcd-859e-44c4a5c6b6ed" />
-<img width="1133" height="1062" alt="figura_10_asmd_put_ack" src="https://github.com/user-attachments/assets/1b0a2d60-d849-4b43-a784-31a42091c9c0" />
-<img width="1133" height="1160" alt="figura_09_asmd_recv" src="https://github.com/user-attachments/assets/43ef1c29-210b-4039-95d3-4cf7ed9b5896" />
-<img width="1133" height="1249" alt="figura_08_asmd_get_ack" src="https://github.com/user-attachments/assets/ba3793b4-282c-450b-ad2b-5ec7798260d9" />
+## Figura 1. Caja negra e interfaz del periférico I2C Master
+
+<p align="center">
+<img width="700" alt="figura_01_caja_negra" src="https://github.com/user-attachments/assets/87a2ab2f-34a1-43eb-935c-8fdc51fa6b81" />
+</p>
+
+**Descripción:** Esta figura muestra cómo se conecta el periférico I2C Master con el resto del sistema. La CPU se comunica con los registros CSR, que funcionan como intermediarios para enviar instrucciones y datos al núcleo `i2c_master_core`. Este núcleo controla la comunicación con la memoria EEPROM mediante las líneas SCL y SDA. También se observa el funcionamiento de los buffers open-drain, que permiten controlar las líneas del bus llevándolas a nivel bajo o liberándolas.
+
+**Funcionamiento en orden:**
+
+1. La CPU lee o escribe los registros CSR: CTRL, STATUS, DATA y PRESCALER, para configurar y controlar las operaciones del periférico.
+2. Los registros CSR entregan al núcleo los comandos `cmd_start`, `cmd_write`, `cmd_read`, `cmd_stop`, además de la dirección del esclavo, el bit de lectura o escritura, los datos y la configuración del reloj.
+3. El núcleo procesa las instrucciones y devuelve información mediante las señales `ready`, `bus_held`, `done`, `ack_err` y `rx_byte`.
+4. Para controlar el bus, el núcleo utiliza `sda_low` y `scl_low`, que actúan sobre los buffers open-drain para llevar las líneas a nivel bajo o liberarlas.
+5. Finalmente, las señales SCL y SDA llegan a la EEPROM. Las resistencias pull-up mantienen el nivel alto cuando las líneas se liberan, mientras que `sda_i` y `scl_i` permiten leer los niveles reales del bus.
+
+---
+
+## Figura 2. Arquitectura interna del i2c_master_core
+
+<p align="center">
+<img width="700" alt="figura_02_bloques_control_datapath" src="https://github.com/user-attachments/assets/fe5a20bc-9dd2-47bb-b721-566ec8ce58b2" />
+</p>
+
+**Descripción:** Esta figura muestra cómo está organizado internamente el núcleo I2C Master. Su funcionamiento se divide en dos partes: el controlador, encargado de decidir qué operación debe realizarse y cuándo, y el datapath, responsable de manipular los datos mediante registros, contadores, desplazadores y sincronizadores. Ambos trabajan coordinadamente para ejecutar las instrucciones recibidas.
+
+**Funcionamiento en orden:**
+
+1. El controlador recibe los comandos provenientes de la interfaz, junto con las señales de reloj `clk` y reinicio `rst`.
+2. La máquina de estados FSM determina el siguiente estado y controla la fase de temporización `q`.
+3. El controlador genera las señales de control: `load_addr`, `load_tx`, `clear_index`, `increment_index`, `scl_sel`, `sda_sel`, `shift_in`, `sample_ack`, `latch_rx` y `latch_nack`.
+4. El datapath recibe estas órdenes y ejecuta las operaciones correspondientes, como cargar direcciones y datos, desplazar bits, actualizar contadores y controlar las salidas SDA y SCL.
+5. El datapath devuelve información al controlador mediante señales como `q_tick`, `last_bit` y `ack_bit`.
+6. Finalmente, el controlador genera `ready`, `bus_held`, `done` y `ack_err`, mientras que el datapath proporciona `rx_byte`, `sda_low` y `scl_low`.
+
+---
+
+## Figura 3. Máquina de estados finitos (FSM) del I2C Master
+
+<p align="center">
+<img width="850" alt="figura_03_fsm" src="https://github.com/user-attachments/assets/c614b771-8c78-41d2-aad7-fc8ec6ec7ac5" />
+</p>
+
+**Descripción:** Esta figura representa el recorrido que sigue el controlador durante una comunicación I2C. La máquina de estados está formada por ocho estados: IDLE, HOLD, START, SEND, GET_ACK, RECV, PUT_ACK y STOP. Cada estado cumple una función específica, desde esperar instrucciones hasta transmitir o recibir información y finalizar la comunicación.
+
+**Funcionamiento en orden (escritura típica):**
+
+1. El controlador comienza en IDLE, esperando una instrucción. Cuando recibe `cmd_start`, pasa al estado START.
+2. En START se genera la condición de inicio del protocolo I2C. Al completar las fases de temporización, el controlador pasa a SEND.
+3. En SEND se transmite el byte correspondiente, comenzando por el bit más significativo. El proceso se repite hasta completar los ocho bits y después se pasa a GET_ACK.
+4. En GET_ACK se libera SDA para comprobar la respuesta del esclavo. Si recibe ACK, continúa hacia HOLD; si recibe NACK, activa el error y pasa automáticamente a STOP.
+5. Desde HOLD, el controlador puede continuar según la instrucción recibida:
+   - `cmd_write`: vuelve a SEND para transmitir otro byte.
+   - `cmd_read`: pasa a RECV para recibir un byte y después a PUT_ACK para responder con ACK o NACK.
+   - `cmd_start`: vuelve a START para generar un Repeated START.
+   - `cmd_stop`: pasa a STOP para finalizar la comunicación.
+6. Finalmente, STOP genera la condición de parada y el controlador regresa a IDLE, quedando preparado para una nueva operación.
+
+---
+
+## Figura 4. Diagrama ASMD del estado IDLE
+
+<p align="center">
+<img width="800" alt="figura_04_asmd_idle" src="https://github.com/user-attachments/assets/a1fc310c-b537-44f8-b468-ab86b9f7ac6c" />
+</p>
+
+**Descripción:** Esta figura muestra el estado inicial del controlador, en el que el I2C Master permanece esperando una nueva instrucción de inicio. Mientras se encuentra en IDLE, el periférico está disponible para recibir comandos, mantiene las líneas del bus liberadas y no ejecuta operaciones de transmisión o recepción. Solamente responde cuando recibe `cmd_start`.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en IDLE y establece `ready=1`, indicando que está disponible. También mantiene `bus_held=0` y las líneas del bus liberadas.
+2. Comprueba si la señal `cmd_start` está activa.
+3. Si `cmd_start=0`, no se inicia ninguna operación y el controlador permanece en IDLE.
+4. Si `cmd_start=1`, ejecuta la acción A1: carga en el registro D la dirección del esclavo junto con el bit de lectura o escritura:
+
+   $$D^{+} \leftarrow \{slave\_addr,\ rw\}$$
+
+   También inicializa:
+
+   $$i^{+}\leftarrow 0,\qquad q^{+}\leftarrow 0$$
+
+   y libera SDA:
+
+   $$sda\_low^{+}\leftarrow 0$$
+
+5. Una vez preparados estos valores, el controlador pasa al estado START para comenzar la comunicación.
+
+---
+
+## Figura 5. Diagrama ASMD del estado HOLD
+
+<p align="center">
+<img width="800" alt="figura_05_asmd_hold" src="https://github.com/user-attachments/assets/a99bfe2e-ee51-4266-b235-e3ea76849038" />
+</p>
+
+**Descripción:** Esta figura representa el estado en el que el maestro mantiene la comunicación disponible para continuar enviando o recibiendo información. Durante HOLD, SCL permanece en nivel bajo y el controlador espera una nueva instrucción de la CPU. Dependiendo del comando recibido, puede iniciar otra transmisión, recibir datos, generar un nuevo START o finalizar la comunicación.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en HOLD y mantiene SCL en nivel bajo mientras espera una nueva instrucción.
+2. Primero comprueba si `cmd_start=1`. Si es así, ejecuta A2: carga nuevamente la dirección del esclavo y el bit `rw`, libera SDA y pasa a START para generar un Repeated START.
+3. Si no existe una instrucción START, comprueba `cmd_write`. Si está activa, ejecuta A3:
+
+   $$D^{+}\leftarrow tx\_byte$$
+
+   Después pasa a SEND para transmitir el byte.
+4. Si tampoco existe una instrucción WRITE, comprueba `cmd_read`. Si está activa, ejecuta A4:
+
+   $$nl^{+}\leftarrow nack\_last$$
+
+   Libera SDA y pasa a RECV para comenzar a recibir información.
+5. Si no hay una instrucción de lectura, comprueba `cmd_stop`. Cuando está activa, ejecuta A5 y pasa a STOP.
+6. Si ninguna instrucción está activa, permanece en HOLD esperando el siguiente comando.
+
+---
+
+## Figura 6. Diagrama ASMD del estado START
+
+<p align="center">
+<img width="800" alt="figura_06_asmd_start" src="https://github.com/user-attachments/assets/06a597fd-5748-4efa-b49d-b7a5baf4278a" />
+</p>
+
+**Descripción:** Esta figura explica cómo el maestro genera la condición START del protocolo I2C. Para hacerlo, el controlador sigue cinco fases de temporización, identificadas como S0, S1, S2, S3 y S4. Durante estas fases modifica las señales SDA y SCL hasta producir la condición de inicio, que ocurre cuando SDA pasa de nivel alto a nivel bajo mientras SCL permanece en nivel alto. Cada avance depende de que `q_tick=1`.
+
+**Funcionamiento en orden:**
+
+1. S0 (`q=0`): se libera SCL para llevarla a nivel alto.
+2. S1 (`q=1`): se mantiene la señal mientras se espera completar el intervalo correspondiente.
+3. S2 (`q=2`): se lleva SDA a nivel bajo mientras SCL permanece en nivel alto. Esto genera la condición START.
+4. S3 (`q=3`): se mantiene la condición generada durante el intervalo correspondiente.
+5. S4 (`q=4`): se lleva SCL a nivel bajo y se completa la secuencia de inicio.
+6. Una vez terminada esta operación, el controlador pasa a SEND para comenzar a transmitir la dirección o los datos correspondientes.
+
+---
+
+## Figura 7. Diagrama ASMD del estado SEND
+
+<p align="center">
+<img width="800" alt="figura_07_asmd_send" src="https://github.com/user-attachments/assets/728391dc-00d9-4424-a81d-26664af26f3a" />
+</p>
+
+**Descripción:** Esta figura muestra cómo el maestro transmite un byte de información hacia el dispositivo esclavo. La transmisión se realiza bit por bit a través de la línea SDA, comenzando por el bit más significativo (MSB). El controlador utiliza las fases de temporización para preparar cada bit, permitir que el esclavo lo lea y avanzar hasta completar los ocho bits del byte.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en SEND con el byte que debe transmitir almacenado en el registro D.
+2. W0: coloca sobre SDA el bit correspondiente del registro, siguiendo el orden:
+
+   $$D[7-i]$$
+
+   SCL permanece en nivel bajo para preparar el dato.
+3. W1: libera SCL para llevarla a nivel alto y permitir que el esclavo observe el valor presente en SDA.
+4. W2: mantiene SCL en nivel alto durante el intervalo correspondiente, permitiendo que el dato permanezca estable.
+5. W3: comprueba si todavía quedan bits por transmitir. Si $i<7$, incrementa el contador:
+
+   $$i^{+}\leftarrow i+1$$
+
+   Lleva SCL a nivel bajo y repite el proceso.
+6. W4: cuando $i=7$, significa que ya se transmitieron los ocho bits. El controlador lleva SCL a nivel bajo y pasa a GET_ACK para comprobar la respuesta del esclavo.
+
+---
+
+## Figura 8. Diagrama ASMD del estado GET_ACK
+
+<p align="center">
+<img width="800" alt="figura_08_asmd_get_ack" src="https://github.com/user-attachments/assets/799317a6-556d-4c2b-b76e-a4aebbfd1aec" />
+</p>
+
+**Descripción:** Esta figura representa el momento en el que el maestro espera la confirmación del dispositivo esclavo después de transmitir un byte. Para permitir que el esclavo responda, el maestro libera SDA y posteriormente lee su valor cuando SCL se encuentra en nivel alto. Dependiendo de la respuesta recibida, la comunicación puede continuar o finalizar mediante una condición STOP.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en GET_ACK después de completar la transmisión de los ocho bits.
+2. G0: libera SDA para que el dispositivo esclavo pueda colocar su respuesta en el bus.
+3. G1: libera SCL para llevarla a nivel alto y permitir que el esclavo presente su respuesta.
+4. G2: el maestro lee el valor de SDA y lo almacena:
+
+   $$ack\_bit^{+}\leftarrow sda\_i$$
+
+5. Si el valor recibido es `ack_bit=0`, significa que el esclavo respondió ACK. En G3, el controlador lleva SCL a nivel bajo, activa `done=1` y regresa a HOLD.
+6. Si el valor recibido es `ack_bit=1`, significa que el esclavo respondió NACK. En G4, el controlador lleva SCL a nivel bajo, activa `ack_err=1` y pasa a STOP para finalizar la comunicación.
+
+---
+
+## Figura 9. Diagrama ASMD del estado RECV
+
+<p align="center">
+<img width="800" alt="figura_09_asmd_recv" src="https://github.com/user-attachments/assets/317c7ea2-afe3-4cba-ba2c-a964d64eb0c6" />
+</p>
+
+**Descripción:** Esta figura muestra cómo el maestro recibe un byte enviado por el dispositivo esclavo. En este proceso, el maestro libera SDA para que el esclavo pueda colocar los bits en el bus. El controlador lee cada bit y lo almacena progresivamente en el registro de desplazamiento `rx_sh`, hasta completar los ocho bits correspondientes al dato recibido.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en RECV y prepara el proceso de recepción del byte.
+2. V0: espera el intervalo de temporización correspondiente, manteniendo SDA liberada para que el esclavo pueda enviar información.
+3. V1: libera SCL para llevarla a nivel alto y permitir que el dato presente en SDA pueda ser leído.
+4. V2: el maestro toma el valor de SDA y lo introduce en el registro de desplazamiento:
+
+   $$rx\_sh^{+}\leftarrow\{rx\_sh[6:0],\ sda\_i\}$$
+
+   De esta manera, cada nuevo bit se incorpora al registro.
+5. V3: comprueba si todavía faltan bits por recibir. Si $i<7$, incrementa el contador, lleva SCL a nivel bajo y repite el proceso.
+6. V4: cuando $i=7$, significa que ya se recibieron los ocho bits del byte. El controlador lleva SCL a nivel bajo y pasa a PUT_ACK para responder al esclavo.
+
+---
+
+## Figura 10. Diagrama ASMD del estado PUT_ACK
+
+<p align="center">
+<img width="800" alt="figura_10_asmd_put_ack" src="https://github.com/user-attachments/assets/c0b84bf9-27ff-468f-842e-26cb7df47d39" />
+</p>
+
+**Descripción:** Esta figura muestra cómo el maestro responde después de recibir un byte del dispositivo esclavo. Una vez completada la recepción, el maestro debe indicar si desea continuar recibiendo información o si ese era el último byte solicitado. Para ello, utiliza la señal `nack_last`, que determina si debe enviar una respuesta ACK o NACK mediante la línea SDA.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en PUT_ACK después de recibir los ocho bits del dato.
+2. K0: prepara la respuesta mediante:
+
+   $$sda\_low^{+}\leftarrow\neg nl$$
+
+   Si $nl=0$, el maestro lleva SDA a nivel bajo y envía ACK. Si $nl=1$, libera SDA y envía NACK.
+3. K1: libera SCL para llevarla a nivel alto y permitir que el esclavo observe la respuesta del maestro.
+4. K2: mantiene las señales durante el intervalo de temporización correspondiente.
+5. K3: lleva SCL a nivel bajo, transfiere el dato recibido al registro de salida:
+
+   $$rx\_byte^{+}\leftarrow rx\_sh$$
+
+   y activa `done=1` para indicar que terminó la recepción del byte.
+6. Finalmente, el controlador regresa a HOLD y queda esperando una nueva instrucción.
+
+---
+
+## Figura 11. Diagrama ASMD del estado STOP
+
+<p align="center">
+<img width="800" alt="figura_11_asmd_stop" src="https://github.com/user-attachments/assets/a92688d5-738e-4483-8ba1-814763384ccf" />
+</p>
+
+**Descripción:** Esta figura representa el proceso mediante el cual el maestro finaliza la comunicación con el dispositivo esclavo. Para generar la condición STOP, el controlador realiza cinco fases de temporización. Durante ellas organiza los niveles de SDA y SCL hasta producir el cambio de SDA de nivel bajo a nivel alto mientras SCL permanece en nivel alto, indicando que la comunicación ha terminado.
+
+**Funcionamiento en orden:**
+
+1. El controlador entra en STOP y comienza la secuencia de finalización.
+2. X0: lleva SDA a nivel bajo para preparar la condición de parada.
+3. X1: libera SCL para llevarla a nivel alto.
+4. X2: mantiene SDA en nivel bajo y SCL en nivel alto durante el intervalo correspondiente.
+5. X3: libera SDA mientras SCL permanece en nivel alto. Este cambio genera la condición STOP del protocolo I2C.
+6. X4: activa `done=1` para indicar que la operación ha finalizado y regresa a IDLE, donde queda preparado para recibir nuevas instrucciones.
+
+---
+
+## Figura 12. Diagrama temporal de escritura de 0xA6 en la palabra 0x10 de la EEPROM
+
+<p align="center">
+<img width="900" alt="figura_12_temporizacion_0xA6" src="https://github.com/user-attachments/assets/656795f1-aa05-455d-9f4b-13ea53092318" />
+</p>
+
+**Descripción:** Esta figura muestra un ejemplo completo de cómo el I2C Master escribe el dato `0xA6` en la dirección interna `0x10` de la memoria EEPROM, cuyo identificador de esclavo es `0x50`. A través de las señales SCL y SDA se observa cómo se desarrolla la comunicación, desde la condición START hasta la condición STOP, incluyendo el envío de la dirección del dispositivo, la dirección de memoria, el dato y las respuestas ACK. Es una representación lógica de la operación y no una captura de simulación.
+
+**Funcionamiento en orden:**
+
+1. **Inicio de la comunicación:** La CPU activa `cmd_start` y el maestro genera la condición START. Después transmite la dirección del esclavo `0x50` junto con el bit de escritura W. Esto forma el byte `0xA0`, que se envía por SDA. El esclavo responde con ACK para confirmar que recibió su dirección. Esta primera parte ocupa 41 períodos Q: 5 Q para START, 32 Q para la dirección y 4 Q para ACK.
+2. **Espera entre instrucciones:** Una vez recibida la confirmación, el controlador pasa a HOLD, donde mantiene SCL en nivel bajo y espera la siguiente instrucción.
+3. **Envío de la dirección de memoria:** La CPU activa `cmd_write` y proporciona el valor `0x10`, que indica la posición interna de la EEPROM donde se almacenará el dato. El maestro transmite este byte y espera la respuesta ACK del esclavo. Esta operación ocupa 36 períodos Q.
+4. **Nueva espera:** Después de recibir ACK, el controlador regresa a HOLD para esperar otro comando.
+5. **Envío del dato:** La CPU activa nuevamente `cmd_write`, esta vez con el valor `0xA6`. El maestro transmite el byte a la EEPROM y espera su respuesta ACK. Esta operación ocupa otros 36 períodos Q.
+6. **Preparación de la finalización:** El controlador vuelve a HOLD después de recibir la confirmación del esclavo.
+7. **Finalización de la comunicación:** La CPU activa `cmd_stop` y el maestro genera la condición STOP, liberando SDA mientras SCL permanece en nivel alto. Esta operación ocupa 5 períodos Q y marca el final de la escritura.
+
+**Tiempo total de la operación:**
+
+- START: 5 Q.
+- Dirección del esclavo y ACK: 36 Q.
+- Dirección interna de memoria y ACK: 36 Q.
+- Dato y ACK: 36 Q.
+- STOP: 5 Q.
+
+Por lo tanto, el tiempo total es:
+
+$$Q_{total}=5+36+36+36+5=118\ Q$$
+
+Considerando 63 ciclos de reloj por período Q:
+
+$$N_{ciclos}=118\times63=7434$$
+
+Para un reloj de entrada de 25 MHz:
+
+$$t=\frac{7434}{25\times10^6}=\mathbf{297.36\ \mu s}$$
+
+Este tiempo no incluye los intervalos de permanencia en HOLD.
 
 
 
