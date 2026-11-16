@@ -1,4 +1,4 @@
-# I2C Master para Consola de Videojuegos (Almacenamiento EEPROM)
+# I2C Master para Consola de Videojuegos Retro (Almacenamiento EEPROM)
 
 ## Introducción
 
