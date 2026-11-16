@@ -86,19 +86,18 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 
 
 
-<img width="2360" height="1646" alt="figura_04_asmd_idle" src="https://github.com/user-attachments/assets/fb3cb6c7-c517-49b8-87a6-c68bb555d4b1" />
-<img width="2600" height="2380" alt="figura_03_fsm" src="https://github.com/user-attachments/assets/f93396df-94a1-4bd3-b3ed-3b8652e20a2c" />
-<img width="2160" height="2980" alt="figura_02_bloques_control_datapath" src="https://github.com/user-attachments/assets/91b4b474-67a3-44c0-8fdb-a248074d15e7" />
-<img width="2080" height="2970" alt="figura_01_caja_negra" src="https://github.com/user-attachments/assets/3c4c376c-73c7-4f8c-83ab-f703d2c9f6cc" />
-<img width="2480" height="2240" alt="figura_12_temporizacion_0xA6" src="https://github.com/user-attachments/assets/9a9bed35-424c-4804-9c5f-113cdab4a4be" />
-<img width="2360" height="2522" alt="figura_11_asmd_stop" src="https://github.com/user-attachments/assets/b8f7180e-11d8-4bdc-9d2b-08e51b3eb0af" />
-<img width="2360" height="2212" alt="figura_10_asmd_put_ack" src="https://github.com/user-attachments/assets/d0e6680b-48ea-4ee3-88bd-3abbd966267f" />
-<img width="2360" height="2416" alt="figura_09_asmd_recv" src="https://github.com/user-attachments/assets/0ccca19a-499f-481c-84d4-990517864efb" />
-<img width="2360" height="2602" alt="figura_08_asmd_get_ack" src="https://github.com/user-attachments/assets/9f7969e8-7396-4991-ac32-e3a67c2651c3" />
-<img width="2360" height="2460" alt="figura_07_asmd_send" src="https://github.com/user-attachments/assets/3384aace-806f-4f0f-8d37-4dcb5396b026" />
-<img width="2360" height="2418" alt="figura_06_asmd_start" src="https://github.com/user-attachments/assets/ab51516b-e287-4cd3-8077-4560f851664d" />
-<img width="2360" height="2172" alt="figura_05_asmd_hold" src="https://github.com/user-attachments/assets/fa4dbc92-a8db-4fea-a57d-dfcdf5cc1ac4" />
+<img width="1133" height="1161" alt="figura_06_asmd_start" src="https://github.com/user-attachments/assets/b6b07bb6-a194-4ef0-a874-8816971d7f1c" />
 
+<img width="1133" height="1181" alt="figura_07_asmd_send" src="https://github.com/user-attachments/assets/c668b7b7-35f6-4205-a932-5fd865ed28ac" /><img width="1133" height="1043" alt="figura_05_asmd_hold" src="https://github.com/user-attachments/assets/92420034-941a-4695-8b5e-e808ce4ed90c" />
+<img width="1133" height="790" alt="figura_04_asmd_idle" src="https://github.com/user-attachments/assets/0dca6107-d816-49bd-a9b0-c48e99d038b1" />
+<img width="1248" height="1142" alt="figura_03_fsm" src="https://github.com/user-attachments/assets/9154d217-8fc8-49df-8ea2-b8ee2a6d340b" />
+<img width="1037" height="1430" alt="figura_02_bloques_control_datapath" src="https://github.com/user-attachments/assets/9d494728-7d81-4bee-907c-c4a94a7c67fe" />
+<img width="998" height="1426" alt="figura_01_caja_negra" src="https://github.com/user-attachments/assets/f86db3f0-441c-400c-9994-b72621a87eca" />
+<img width="1190" height="1075" alt="figura_12_temporizacion_0xA6" src="https://github.com/user-attachments/assets/6830fc49-524e-4262-943d-138d5976be2c" />
+<img width="1133" height="1211" alt="figura_11_asmd_stop" src="https://github.com/user-attachments/assets/cf69bb1e-fc31-4bcd-859e-44c4a5c6b6ed" />
+<img width="1133" height="1062" alt="figura_10_asmd_put_ack" src="https://github.com/user-attachments/assets/1b0a2d60-d849-4b43-a784-31a42091c9c0" />
+<img width="1133" height="1160" alt="figura_09_asmd_recv" src="https://github.com/user-attachments/assets/43ef1c29-210b-4039-95d3-4cf7ed9b5896" />
+<img width="1133" height="1249" alt="figura_08_asmd_get_ack" src="https://github.com/user-attachments/assets/ba3793b4-282c-450b-ad2b-5ec7798260d9" />
 
 
 
