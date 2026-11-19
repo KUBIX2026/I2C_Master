@@ -112,7 +112,9 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ## Figura 2. Arquitectura interna del i2c_master_core
 
 <p align="center">
-<img width="700" alt="figura_02_bloques_control_datapath" src="https://github.com/user-attachments/assets/fe5a20bc-9dd2-47bb-b721-566ec8ce58b2" />
+<img width="2080" height="1200" alt="image" src="https://github.com/user-attachments/assets/c268eb6e-38c8-4433-88ec-c244f841274e" />
+
+
 </p>
 
 **Descripción:** Esta figura muestra cómo está organizado internamente el núcleo I2C Master. Su funcionamiento se divide en dos partes: el controlador, encargado de decidir qué operación debe realizarse y cuándo, y el datapath, responsable de manipular los datos mediante registros, contadores, desplazadores y sincronizadores. Ambos trabajan coordinadamente para ejecutar las instrucciones recibidas.
@@ -131,7 +133,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ## Figura 3. Máquina de estados finitos (FSM) del I2C Master
 
 <p align="center">
-<img width="850" alt="figura_03_fsm" src="https://github.com/user-attachments/assets/c614b771-8c78-41d2-aad7-fc8ec6ec7ac5" />
+<img width="1800" height="1040" alt="image" src="https://github.com/user-attachments/assets/86b62cbd-aeb5-4aca-8518-51661fdb3004" />
+
 </p>
 
 **Descripción:** Esta figura representa el recorrido que sigue el controlador durante una comunicación I2C. La máquina de estados está formada por ocho estados: IDLE, HOLD, START, SEND, GET_ACK, RECV, PUT_ACK y STOP. Cada estado cumple una función específica, desde esperar instrucciones hasta transmitir o recibir información y finalizar la comunicación.
@@ -154,7 +157,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ## Figura 4. Diagrama ASMD del estado IDLE
 
 <p align="center">
-<img width="800" alt="figura_04_asmd_idle" src="https://github.com/user-attachments/assets/a1fc310c-b537-44f8-b468-ab86b9f7ac6c" />
+<img width="1280" height="914" alt="image" src="https://github.com/user-attachments/assets/159f4240-3e05-4d56-bbb9-352189697d45" />
+
 </p>
 
 **Descripción:** Esta figura muestra el estado inicial del controlador, en el que el I2C Master permanece esperando una nueva instrucción de inicio. Mientras se encuentra en IDLE, el periférico está disponible para recibir comandos, mantiene las líneas del bus liberadas y no ejecuta operaciones de transmisión o recepción. Solamente responde cuando recibe `cmd_start`.
@@ -182,8 +186,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 
 ## Figura 5. Diagrama ASMD del estado HOLD
 
-<p align="center">
-<img width="800" alt="figura_05_asmd_hold" src="https://github.com/user-attachments/assets/a99bfe2e-ee51-4266-b235-e3ea76849038" />
+<p align="center"><img width="1720" height="1256" alt="image" src="https://github.com/user-attachments/assets/4c959394-63bf-45f0-9772-01d3b496f02f" />
+
 </p>
 
 **Descripción:** Esta figura representa el estado en el que el maestro mantiene la comunicación disponible para continuar enviando o recibiendo información. Durante HOLD, SCL permanece en nivel bajo y el controlador espera una nueva instrucción de la CPU. Dependiendo del comando recibido, puede iniciar otra transmisión, recibir datos, generar un nuevo START o finalizar la comunicación.
