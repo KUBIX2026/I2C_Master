@@ -85,7 +85,7 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 
 
 
-# Descripción y funcionamiento de las figuras del I2C Master
+
 
 ---
 
