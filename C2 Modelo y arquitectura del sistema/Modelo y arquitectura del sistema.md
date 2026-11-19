@@ -91,9 +91,11 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 
 ## Figura 1. Caja negra e interfaz del periférico I2C Master
 
-<p align="center">
-<img width="700" alt="figura_01_caja_negra" src="https://github.com/user-attachments/assets/87a2ab2f-34a1-43eb-935c-8fdc51fa6b81" />
+<p align="center"><img width="2320" height="800" alt="image" src="https://github.com/user-attachments/assets/6f1748f4-a806-4ced-8baa-0976ad283057" />
+
 </p>
+
+
 
 **Descripción:** Esta figura muestra cómo se conecta el periférico I2C Master con el resto del sistema. La CPU se comunica con los registros CSR, que funcionan como intermediarios para enviar instrucciones y datos al núcleo `i2c_master_core`. Este núcleo controla la comunicación con la memoria EEPROM mediante las líneas SCL y SDA. También se observa el funcionamiento de los buffers open-drain, que permiten controlar las líneas del bus llevándolas a nivel bajo o liberándolas.
 
