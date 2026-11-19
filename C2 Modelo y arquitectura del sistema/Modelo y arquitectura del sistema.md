@@ -214,7 +214,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ## Figura 6. Diagrama ASMD del estado START
 
 <p align="center">
-<img width="800" alt="figura_06_asmd_start" src="https://github.com/user-attachments/assets/06a597fd-5748-4efa-b49d-b7a5baf4278a" />
+<img width="1040" height="1412" alt="image" src="https://github.com/user-attachments/assets/33eaccf0-18fc-4638-81ea-4c8d63128dc1" />
+
 </p>
 
 **Descripción:** Esta figura explica cómo el maestro genera la condición START del protocolo I2C. Para hacerlo, el controlador sigue cinco fases de temporización, identificadas como S0, S1, S2, S3 y S4. Durante estas fases modifica las señales SDA y SCL hasta producir la condición de inicio, que ocurre cuando SDA pasa de nivel alto a nivel bajo mientras SCL permanece en nivel alto. Cada avance depende de que `q_tick=1`.
