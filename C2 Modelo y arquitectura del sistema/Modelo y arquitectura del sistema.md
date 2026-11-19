@@ -351,7 +351,8 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 ## Figura 12. Diagrama temporal de escritura de 0xA6 en la palabra 0x10 de la EEPROM
 
 <p align="center">
-<img width="900" alt="figura_12_temporizacion_0xA6" src="https://github.com/user-attachments/assets/656795f1-aa05-455d-9f4b-13ea53092318" />
+<img width="2296" height="840" alt="image" src="https://github.com/user-attachments/assets/3711d7b4-00d1-43a1-a5d9-ad84fb33bb00" />
+
 </p>
 
 **Descripción:** Esta figura muestra un ejemplo completo de cómo el I2C Master escribe el dato `0xA6` en la dirección interna `0x10` de la memoria EEPROM, cuyo identificador de esclavo es `0x50`. A través de las señales SCL y SDA se observa cómo se desarrolla la comunicación, desde la condición START hasta la condición STOP, incluyendo el envío de la dirección del dispositivo, la dirección de memoria, el dato y las respuestas ACK. Es una representación lógica de la operación y no una captura de simulación.
