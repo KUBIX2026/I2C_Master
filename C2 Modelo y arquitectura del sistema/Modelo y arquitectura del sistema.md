@@ -393,6 +393,59 @@ Este tiempo no incluye los intervalos de permanencia en HOLD.
 
 
 
+Diseño del controlador I²C Master
+
+Descripción general
+
+En esta sección se presenta el diseño arquitectónico del controlador I²C Master desarrollado para el proyecto KUBIX. Se documenta la comunicación entre la CPU y el periférico, la organización interna del controlador y la distribución de las funciones de control y procesamiento de datos.
+
+El diseño se divide en tres diagramas que permiten comprender progresivamente la arquitectura propuesta.
+
+1. Arquitectura CPU – I²C Master
+
+"Arquitectura CPU-I2C" 
+
+<img width="1547" height="976" alt="image" src="https://github.com/user-attachments/assets/7e7dd90e-597d-41d1-b58f-e6bfb2c404e0" />
+
+
+Este diagrama representa la conexión entre la CPU y el periférico I²C Master. Se muestra el uso de un decodificador de direcciones (Address Decoder) para identificar los accesos destinados al controlador, así como las señales de control y datos que permiten configurar e iniciar las operaciones.
+
+También se presenta la interfaz de registros CSR (Control and Status Registers), mediante la cual la CPU proporciona parámetros de transmisión y recibe información sobre el estado de las operaciones.
+
+2. Arquitectura interna: Controller y Datapath
+
+"Arquitectura Controller y Datapath" 
+
+<img width="1500" height="941" alt="image" src="https://github.com/user-attachments/assets/7c44a955-b2a5-47cc-a97a-3dcea24863e0" />
+
+
+El controlador I²C Master se organiza en dos bloques principales:
+
+- Controller (FSM): encargado de gestionar la secuencia de operaciones mediante una máquina de estados finitos. Interpreta los comandos recibidos y genera las señales de control necesarias para coordinar el funcionamiento del sistema.
+- Datapath: encargado del almacenamiento, desplazamiento y procesamiento de los datos, además de la generación de las señales asociadas a la comunicación I²C.
+
+Ambos bloques trabajan de manera coordinada. El Controller envía señales de control al Datapath y recibe de este información de estado para determinar las transiciones entre estados.
+
+3. Arquitectura interna del Datapath
+
+"Detalle del Datapath" 
+<img width="1509" height="1122" alt="image" src="https://github.com/user-attachments/assets/461b9966-1d8a-47c5-8bb0-547dc2dfa544" />
+
+
+Este diagrama presenta con mayor detalle la organización interna del Datapath y el flujo de información entre sus componentes.
+
+Se identifican los siguientes bloques funcionales:
+
+- Registro D: almacena temporalmente la dirección del dispositivo esclavo y el byte que se desea transmitir.
+- Contador i: lleva el seguimiento de los bits procesados durante las operaciones de transmisión y recepción.
+- Timer: genera las señales temporales necesarias para coordinar las operaciones del protocolo, a partir del prescaler configurado.
+- Registro rx_sh: permite recibir y almacenar secuencialmente los bits provenientes de la línea SDA.
+- Selector SDA/SCL: determina el comportamiento de las señales de control asociadas a las líneas de comunicación.
+- Registros de salida: almacenan los datos recibidos y las señales de resultado que serán utilizadas por el controlador y la interfaz externa.
+
+Estado del diseño
+
+Los diagramas representan la arquitectura funcional propuesta para el controlador I²C Master de KUBIX. Constituyen la base para la siguiente etapa de desarrollo, correspondiente a la revisión de señales, validación de la lógica de control y posterior descripción del hardware mediante código HDL.
 
 
 
