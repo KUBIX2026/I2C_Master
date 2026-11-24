@@ -78,10 +78,6 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 <img width="633" height="2392" alt="elkindiagramas-Página-4" src="https://github.com/user-attachments/assets/c5820cd5-5466-48f8-9a74-5a71fbe1f266" />
 
 
-**Figura 3.1 Diagrama ASM del I²C Master.**
-
-### 1.5 Diagrama de estados.
-<img width="2760" height="5000" alt="diagrama_estados_control_i2c_v2" src="https://github.com/user-attachments/assets/5c6e4dfe-9f42-4756-9b1a-2594da3b5fb9" />
 
 **Figura 3.2 Diagrama de estados del I²C Master.**
 
