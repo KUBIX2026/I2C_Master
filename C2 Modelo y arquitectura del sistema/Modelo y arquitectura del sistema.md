@@ -74,7 +74,9 @@ Fuente de (a): Example of Single-Master Transmit/Receive Using I2C Bus Interface
 **Figura 3. Diagrama de flujo del algoritmo de transferencia del I²C Master.**
 
 ### 1.4 Diagrama ASM.
-<img width="2750" height="5819" alt="carta_asm_master_i2c_v2" src="https://github.com/user-attachments/assets/01c09d56-618e-4e71-ade1-f8c04ba5d1b8" />
+
+<img width="633" height="2392" alt="elkindiagramas-Página-4" src="https://github.com/user-attachments/assets/c5820cd5-5466-48f8-9a74-5a71fbe1f266" />
+
 
 **Figura 3.1 Diagrama ASM del I²C Master.**
 
